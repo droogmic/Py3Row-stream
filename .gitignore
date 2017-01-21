@@ -1,6 +1,7 @@
 Py3Row/
 venv/
 *.txt
+!requirements.txt
 *.csv
 *.png
 __pycache__/
