@@ -1,0 +1,5 @@
+Py3Row/
+venv/
+*.txt
+*.csv
+*.png
