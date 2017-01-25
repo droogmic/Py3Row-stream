@@ -1,4 +1,4 @@
-import PyRow.pyrow as pyrow
+from pyrow import pyrow
 import time
 
 def main():
@@ -7,7 +7,7 @@ def main():
     if len(ergs) == 0:
         exit("No ergs found.")
     print(ergs)
-    erg = pyrow.pyrow(ergs[0])
+    erg = pyrow.PyRow(ergs[0])
     print("Connected to erg.")
 
     #Create a dictionary of the different status states
