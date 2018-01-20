@@ -339,7 +339,7 @@ def main():
     ergs_write_lock = threading.Lock()
     ergs = Ergs()
 
-    overlay = Overlay()
+    overlay = Overlay(ergs=ergs)
 
     # pipe_thread = threading.Thread(
     #     target=piper, args=(bumps,), name="pipe_thread", daemon=True)
