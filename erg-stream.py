@@ -151,7 +151,7 @@ class Overlay(object):
             self.smallfnt = ImageFont.truetype('arial.ttf', 16)
         self.ergs = ergs
 
-    def regenerate():
+    def regenerate(self):
         txt = Image.new('RGBA', base.size, (255,255,255,0))
         d = ImageDraw.Draw(txt)
         d.text((600,10), "{:.0f}".format(get_total_distance()), font=vbigfnt, fill=(255,255,255,255))
@@ -337,16 +337,16 @@ class AppState(Enum):
 
 
 def main():
+    import os.path
 
     if not os.path.isfile(DISTLOG_NAME):
         print("Generating CSV Files")
-        with open(fname, 'w') as csvfile:
+        with open(DISTLOG_NAME, 'w') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=DISTLOG_FIELDNAME)
             writer.writeheader()
 
     for i in range(NUM_ERGS):
         fname = f'erg{i}.csv'
-        import os.path
         if not os.path.isfile(fname):
             print("Generating CSV Files")
             with open(fname, 'w') as csvfile:
