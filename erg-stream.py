@@ -229,6 +229,9 @@ class Erg(object):
             writer = csv.DictWriter(csvfile, fieldnames=DISTLOG_FIELDNAME)
             writer.writerow({'Time': dt.isoformat(timespec='seconds'), 'Name': self.name, 'Erg': self.index+1, 'Distance': erg_obj.distance})
 
+    def erg_update(self, erg_distance):
+        self.distance = erg_distance
+
 class Ergs(object):
     """docstring for Ergs."""
     def __init__(self, *, state=None):
