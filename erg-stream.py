@@ -290,14 +290,14 @@ def get_new_callback(ergs, ergs_write_lock, console_condition):
             index, name, distance = input_boat_details()
             # Notifies main loop that asynchronous IO has occured
             console_condition.notify_all()
-        with bumps_write_lock:
+        with ergs_write_lock:
             ergs.add_erg(erg.id, index, name, finish_distance=distance)
         return name
     return new_callback
 
 def get_update_callback(ergs, ergs_write_lock, overlay):
     def update_callback(erg):
-        with bumps_write_lock:
+        with ergs_write_lock:
             #write boat details
             ergs.erg_update(erg.id, erg.data['distance'])
         erg_obj = ergs.get_erg_by_id(erg.id)
