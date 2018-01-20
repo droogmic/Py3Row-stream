@@ -3,6 +3,8 @@ from pyrow.ergmanager import ErgManager
 from datetime import datetime as dt
 import csv
 import threading
+from enum import Enum
+# import queue
 from PIL import Image, ImageDraw, ImageFont
 
 NUM_ERGS = 4
@@ -13,18 +15,18 @@ LOG_FIELDNAMES = ['Time', 'Name', 'Distance']
 DISTLOG_NAME = "ergdistances.csv"
 DISTLOG_FIELDNAME = ['Time', 'Name', 'Erg', 'Distance']
 
-def stint(name, distance):
-    try:
-        d = int(distance)
-    except ValueError:
-        print(f"Invalid distance {distance}, defaulting to 2k")
-        d = 2000
-    return {
-        'name': name,
-        'target': d,
-        'remain': d,
-    }
-STINT_DICT = stint("", -1)
+# def stint(name, distance):
+#     try:
+#         d = int(distance)
+#     except ValueError:
+#         print(f"Invalid distance {distance}, defaulting to 2k")
+#         d = 2000
+#     return {
+#         'name': name,
+#         'target': d,
+#         'remain': d,
+#     }
+# STINT_DICT = stint("", -1)
 
 BOX_X = [30, 150, 1060, 1180]
 POS_Y = [635, 655, 680]
@@ -33,14 +35,14 @@ POSITIONS = {
     1: [(x, POS_Y[1]) for x in BOX_X],
     2: [(x, POS_Y[2]) for x in BOX_X],
 }
-status_q = queue.Queue()
-status = [STINT_DICT for _ in range(NUM_ERGS)]
-stint_qs = [queue.Queue() for _ in range(NUM_ERGS)]
-exit_requested = False
+# status_q = queue.Queue()
+# status = [STINT_DICT for _ in range(NUM_ERGS)]
+# stint_qs = [queue.Queue() for _ in range(NUM_ERGS)]
+# exit_requested = False
 
-with open(f'erg{erg_num}.csv', 'a') as csvfile:
-    writer = csv.DictWriter(csvfile, fieldnames=LOG_FIELDNAMES)
-    writer.writerow({'Name': s['name'], 'Distance': s['target'], 'Time': 10})
+# with open(f'erg{erg_num}.csv', 'a') as csvfile:
+#     writer = csv.DictWriter(csvfile, fieldnames=LOG_FIELDNAMES)
+#     writer.writerow({'Name': s['name'], 'Distance': s['target'], 'Time': 10})
 
 def old_stream_overlay():
     base = Image.open("v2.png").convert('RGBA')
@@ -237,9 +239,9 @@ class Ergs(object):
     def get_state(self):
         return [erg.get_state() for erg in self.ergs]
 
-    @property
-    def ergs(self):
-        return self.ergs
+    # @property
+    # def ergs(self):
+    #     return self.ergs
 
     def add_erg(self, erg_id, index, name, *, finish_distance):
         erg = Erg(erg_id, index, name, finish_distance=finish_distance)
