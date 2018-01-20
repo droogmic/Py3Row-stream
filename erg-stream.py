@@ -265,6 +265,8 @@ class Ergs(object):
         erg_list = [erg for erg in self.ergs if erg.id==erg_id]
         if len(erg_list)==1:
             return erg_list[0]
+        else:
+            print("Error")
 
     def erg_update(self, erg_id, erg_distance):
         boat = self.get_erg_by_id(erg_id)
