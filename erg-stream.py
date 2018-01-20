@@ -1,8 +1,9 @@
+import time
+import csv
+import threading
 from pyrow import pyrow as pyrow
 from pyrow.ergmanager import ErgManager
 from datetime import datetime as dt
-import csv
-import threading
 from enum import Enum
 # import queue
 from PIL import Image, ImageDraw, ImageFont
