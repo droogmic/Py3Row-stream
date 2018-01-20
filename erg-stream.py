@@ -218,7 +218,7 @@ class Erg(object):
         }
 
     def save_erg(self):
-        with open(DISTLOG_NAME as csvfile:
+        with open(DISTLOG_NAME) as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=DISTLOG_FIELDNAME)
             writer.writerow({'Time': dt.isoformat(timespec='seconds'), 'Name': self.name, 'Erg': self.index+1, 'Distance': erg_obj.distance})
 
@@ -271,7 +271,7 @@ def input_boat_details():
     while not valid:
         number = input("Enter erg number (1-4)\n--> ")
         if number.isdigit():
-            valid = int(number) in (1, 2, 3, 4):
+            valid = int(number) in (1, 2, 3, 4)
     number = int(number)
     name = input("Enter name\n--> ")
     distance = input("Enter distance\n--> ")
@@ -393,6 +393,7 @@ def main():
             try:
                 #Releases lock, waits until notified or 1s elapsed, then reacquires lock
                 if not console_condition.wait(timeout=1):
+                    pass
                     # print(f"BUMPS: {bumps}")
                     # boats_main_view(bumps=bumps)
             except KeyboardInterrupt:
