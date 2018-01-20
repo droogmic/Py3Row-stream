@@ -35,97 +35,6 @@ POSITIONS = {
     1: [(x, POS_Y[1]) for x in BOX_X],
     2: [(x, POS_Y[2]) for x in BOX_X],
 }
-# status_q = queue.Queue()
-# status = [STINT_DICT for _ in range(NUM_ERGS)]
-# stint_qs = [queue.Queue() for _ in range(NUM_ERGS)]
-# exit_requested = False
-
-# with open(f'erg{erg_num}.csv', 'a') as csvfile:
-#     writer = csv.DictWriter(csvfile, fieldnames=LOG_FIELDNAMES)
-#     writer.writerow({'Name': s['name'], 'Distance': s['target'], 'Time': 10})
-
-def old_stream_overlay():
-    base = Image.open("v2.png").convert('RGBA')
-    vbigfnt = ImageFont.truetype('Pillow/Tests/fonts/arial.ttf', 32)
-    bigfnt = ImageFont.truetype('Pillow/Tests/fonts/arial.ttf', 20)
-    smallfnt = ImageFont.truetype('Pillow/Tests/fonts/arial.ttf', 16)
-    while not exit_requested:
-
-        total_distance = 0
-        for erg_num in range(NUM_ERGS):
-            with open(f'erg{erg_num}.csv', 'r') as csvfile:
-                reader = csv.DictReader(csvfile)
-                for row in reader:
-                    total_distance += int(row['Distance'])
-
-        txt = Image.new('RGBA', base.size, (255,255,255,0))
-        d = ImageDraw.Draw(txt)
-        d.text((600,10), f"{total_distance:.0f}", font=vbigfnt, fill=(255,255,255,255))
-        for erg_num in range(NUM_ERGS):
-            d.text(POSITIONS[0][erg_num], f"{status[erg_num]['remain']:.0f}m", font=smallfnt, fill=(255,255,255,255))
-            d.text(POSITIONS[1][erg_num], f"{status[erg_num]['target']:.0f}m", font=bigfnt, fill=(255,255,255,255))
-            if 'pace' in status[erg_num]:
-                min_val = int(status[erg_num]['pace']//60)
-                sec_val = int(status[erg_num]['pace'] - min_val*60)
-                d.text(POSITIONS[2][erg_num], f"{min_val}:{sec_val:02d}", font=smallfnt, fill=(255,255,255,255))
-        # out = Image.alpha_composite(base, txt)
-        # out.save('overlay.png')
-        txt.save('overlay.png')
-        time.sleep(2)
-
-def old_main():
-
-    for i in range(NUM_ERGS):
-        fname = f'erg{i}.csv'
-        import os.path
-        if not os.path.isfile(fname):
-            print("Generating CSV Files")
-            with open(fname, 'w') as csvfile:
-                writer = csv.DictWriter(csvfile, fieldnames=LOG_FIELDNAMES)
-                writer.writeheader()
-
-    threads = []
-
-    ergs = list(pyrow.find())
-    if len(ergs) == 0:
-        exit("No ergs found.")
-    print(ergs)
-
-    for i in range(NUM_ERGS):
-        erg = pyrow.PyRow(ergs[i])
-        print("Connected to erg.")
-        t = threading.Thread(target=erg_monitor, args=(i,erg))
-        t.start()
-        threads.append(t)
-
-    t = threading.Thread(target=stream_overlay)
-    t.start()
-    threads.append(t)
-
-    t = threading.Thread(target=status_getter)
-    t.start()
-    threads.append(t)
-
-    while not exit_requested:
-        response = input("Please enter erg 1 to 4 or 0 to exit: \n")
-        try:
-            response = int(response)
-            if 1 <= response <= 4:
-                rower_name = input("Name: ")
-                distance = input("Distance /m: ")
-                stint_qs[response-1].put(stint(rower_name, distance))
-            else:
-                exit_requested = True
-        except ValueError:
-            print("Invalid number")
-
-    # stop workers
-    status_q.put(None)
-    for q in stint_qs:
-        q.put(None)
-    for t in threads:
-        t.join()
-
 
 def get_total_distance():
     total_distance = 0
@@ -152,7 +61,7 @@ class Overlay(object):
         self.ergs = ergs
 
     def regenerate(self):
-        txt = Image.new('RGBA', base.size, (255,255,255,0))
+        txt = Image.new('RGBA', self.base.size, (255,255,255,0))
         d = ImageDraw.Draw(txt)
         d.text((600,10), "{:.0f}".format(get_total_distance()), font=vbigfnt, fill=(255,255,255,255))
         for erg in self.ergs.ergs:
@@ -162,7 +71,7 @@ class Overlay(object):
                 min_val = int(status[erg_num]['pace']//60)
                 sec_val = int(status[erg_num]['pace'] - min_val*60)
                 d.text(POSITIONS[2][erg_num], f"{min_val}:{sec_val:02d}", font=smallfnt, fill=(255,255,255,255))
-        # out = Image.alpha_composite(base, txt)
+        # out = Image.alpha_composite(self.base, txt)
         # out.save('overlay.png')
         txt.save('overlay.png')
         time.sleep(2)
