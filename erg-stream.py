@@ -265,8 +265,6 @@ class Ergs(object):
         erg_list = [erg for erg in self.ergs if erg.id==erg_id]
         if len(erg_list)==1:
             return erg_list[0]
-        else:
-            print("Error")
 
     def erg_update(self, erg_id, erg_distance):
         boat = self.get_erg_by_id(erg_id)
@@ -308,9 +306,10 @@ def get_update_callback(ergs, ergs_write_lock, overlay):
             #write boat details
             ergs.erg_update(erg.id, erg.data['distance'])
         erg_obj = ergs.get_erg_by_id(erg.id)
-        with open("erg{}.csv".format(erg_obj.index + 1), 'a') as csvfile:
-            writer = csv.DictWriter(csvfile, fieldnames=LOG_FIELDNAMES)
-            writer.writerow({'Time': dt.isoformat(timespec='seconds'), 'Name': erg_obj.name, 'Distance': erg_obj.distance})
+        if erg_obj:
+            with open("erg{}.csv".format(erg_obj.index + 1), 'a') as csvfile:
+                writer = csv.DictWriter(csvfile, fieldnames=LOG_FIELDNAMES)
+                writer.writerow({'Time': dt.isoformat(timespec='seconds'), 'Name': erg_obj.name, 'Distance': erg_obj.distance})
     return update_callback
 
 def display_menu():
