@@ -63,14 +63,14 @@ class Overlay(object):
     def regenerate(self):
         txt = Image.new('RGBA', self.base.size, (255,255,255,0))
         d = ImageDraw.Draw(txt)
-        d.text((600,10), "{:.0f}".format(get_total_distance()), font=vbigfnt, fill=(255,255,255,255))
+        d.text((600,10), "{:.0f}".format(get_total_distance()), font=self.vbigfnt, fill=(255,255,255,255))
         for erg in self.ergs.ergs:
-            d.text(POSITIONS[0][erg_num], "{:.0f}m".format(erg.finish_distance), font=smallfnt, fill=(255,255,255,255))
-            d.text(POSITIONS[1][erg_num], "{:.0f}m".format(erg.distance), font=bigfnt, fill=(255,255,255,255))
+            d.text(POSITIONS[0][erg_num], "{:.0f}m".format(erg.finish_distance), font=self.smallfnt, fill=(255,255,255,255))
+            d.text(POSITIONS[1][erg_num], "{:.0f}m".format(erg.distance), font=self.bigfnt, fill=(255,255,255,255))
             if False:
                 min_val = int(status[erg_num]['pace']//60)
                 sec_val = int(status[erg_num]['pace'] - min_val*60)
-                d.text(POSITIONS[2][erg_num], f"{min_val}:{sec_val:02d}", font=smallfnt, fill=(255,255,255,255))
+                d.text(POSITIONS[2][erg_num], f"{min_val}:{sec_val:02d}", font=self.smallfnt, fill=(255,255,255,255))
         # out = Image.alpha_composite(self.base, txt)
         # out.save('overlay.png')
         txt.save('overlay.png')
