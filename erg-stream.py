@@ -227,7 +227,7 @@ class Erg(object):
     def save_erg(self):
         with open(DISTLOG_NAME) as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=DISTLOG_FIELDNAME)
-            writer.writerow({'Time': dt.isoformat(timespec='seconds'), 'Name': self.name, 'Erg': self.index+1, 'Distance': erg_obj.distance})
+            writer.writerow({'Time': dt.now().isoformat(timespec='seconds'), 'Name': self.name, 'Erg': self.index+1, 'Distance': erg_obj.distance})
 
     def erg_update(self, erg_distance):
         self.distance = erg_distance
@@ -312,7 +312,7 @@ def get_update_callback(ergs, ergs_write_lock, overlay):
         if erg_obj:
             with open("erg{}.csv".format(erg_obj.index + 1), 'a') as csvfile:
                 writer = csv.DictWriter(csvfile, fieldnames=LOG_FIELDNAMES)
-                writer.writerow({'Time': dt.isoformat(timespec='seconds'), 'Name': erg_obj.name, 'Distance': erg_obj.distance})
+                writer.writerow({'Time': dt.now().isoformat(timespec='seconds'), 'Name': erg_obj.name, 'Distance': erg_obj.distance})
     return update_callback
 
 def display_menu():
