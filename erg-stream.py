@@ -313,6 +313,7 @@ def get_update_callback(ergs, ergs_write_lock, overlay):
             with open("erg{}.csv".format(erg_obj.index + 1), 'a') as csvfile:
                 writer = csv.DictWriter(csvfile, fieldnames=LOG_FIELDNAMES)
                 writer.writerow({'Time': dt.now().isoformat(timespec='seconds'), 'Name': erg_obj.name, 'Distance': erg_obj.distance})
+        overlay.regenerate()
     return update_callback
 
 def display_menu():
@@ -336,6 +337,12 @@ class AppState(Enum):
 
 
 def main():
+
+    if not os.path.isfile(DISTLOG_NAME):
+        print("Generating CSV Files")
+        with open(fname, 'w') as csvfile:
+            writer = csv.DictWriter(csvfile, fieldnames=DISTLOG_FIELDNAME)
+            writer.writeheader()
 
     for i in range(NUM_ERGS):
         fname = f'erg{i}.csv'
