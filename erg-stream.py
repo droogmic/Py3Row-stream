@@ -141,9 +141,14 @@ class Overlay(object):
     def __init__(self, ergs):
         super().__init__()
         self.base = Image.open("v2.png").convert('RGBA')
-        self.vbigfnt = ImageFont.truetype('Pillow/Tests/fonts/arial.ttf', 32)
-        self.bigfnt = ImageFont.truetype('Pillow/Tests/fonts/arial.ttf', 20)
-        self.smallfnt = ImageFont.truetype('Pillow/Tests/fonts/arial.ttf', 16)
+        try:
+            self.vbigfnt = ImageFont.truetype('Pillow/Tests/fonts/arial.ttf', 32)
+            self.bigfnt = ImageFont.truetype('Pillow/Tests/fonts/arial.ttf', 20)
+            self.smallfnt = ImageFont.truetype('Pillow/Tests/fonts/arial.ttf', 16)
+        except:
+            self.vbigfnt = ImageFont.truetype('arial.ttf', 32)
+            self.bigfnt = ImageFont.truetype('arial.ttf', 20)
+            self.smallfnt = ImageFont.truetype('arial.ttf', 16)
         self.ergs = ergs
 
     def regenerate():
@@ -262,7 +267,7 @@ class Ergs(object):
             return erg_list[0]
 
     def erg_update(self, erg_id, erg_distance):
-        boat = self.get_boat_by_erg(erg_id)
+        boat = self.get_erg_by_id(erg_id)
         if boat is not None:
             boat.erg_update(erg_distance)
 
