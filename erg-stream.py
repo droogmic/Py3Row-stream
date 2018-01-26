@@ -120,10 +120,6 @@ class Ergs(object):
     def get_state(self):
         return [erg.get_state() for erg in self.ergs]
 
-    # @property
-    # def ergs(self):
-    #     return self.ergs
-
     def add_erg(self, erg_id, index, name, *, finish_distance):
         erg = Erg(erg_id, index, name, finish_distance=finish_distance)
         self.ergs.insert(index, erg)
@@ -179,7 +175,6 @@ def get_new_callback(ergs, ergs_write_lock, console_condition):
 def get_update_callback(ergs, ergs_write_lock, overlay):
     def update_callback(erg):
         with ergs_write_lock:
-            #write boat details
             ergs.erg_update(erg.id, erg.data['distance'])
         erg_obj = ergs.get_erg_by_id(erg.id)
         if erg_obj:
