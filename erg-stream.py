@@ -1,12 +1,16 @@
 import time
 import csv
 import threading
-from pyrow import pyrow as pyrow
-from pyrow.ergmanager import ErgManager
+
 from datetime import datetime as dt
 from enum import Enum
 # import queue
 from PIL import Image, ImageDraw, ImageFont
+
+from pyrow import pyrow as pyrow
+# from pyrow import simpyrow as pyrow
+from pyrow.ergmanager import ErgManager
+
 
 NUM_ERGS = 4
 SWITCH_TIME = 30
@@ -16,18 +20,7 @@ LOG_FIELDNAMES = ['Time', 'Name', 'Distance']
 DISTLOG_NAME = "ergdistances.csv"
 DISTLOG_FIELDNAME = ['Time', 'Name', 'Erg', 'Distance']
 
-# def stint(name, distance):
-#     try:
-#         d = int(distance)
-#     except ValueError:
-#         print(f"Invalid distance {distance}, defaulting to 2k")
-#         d = 2000
-#     return {
-#         'name': name,
-#         'target': d,
-#         'remain': d,
-#     }
-# STINT_DICT = stint("", -1)
+OVERLAY = "v2.png"
 
 BOX_X = [30, 150, 1060, 1180]
 POS_Y = [635, 655, 680]
@@ -50,7 +43,7 @@ class Overlay(object):
     """docstring for Stream Overlay."""
     def __init__(self, ergs):
         super().__init__()
-        self.base = Image.open("v2.png").convert('RGBA')
+        self.base = Image.open(OVERLAY).convert('RGBA')
         try:
             self.vbigfnt = ImageFont.truetype('Pillow/Tests/fonts/arial.ttf', 32)
             self.bigfnt = ImageFont.truetype('Pillow/Tests/fonts/arial.ttf', 20)
@@ -65,47 +58,17 @@ class Overlay(object):
         txt = Image.new('RGBA', self.base.size, (255,255,255,0))
         d = ImageDraw.Draw(txt)
         d.text((600,10), "{:.0f}".format(get_total_distance()), font=self.vbigfnt, fill=(255,255,255,255))
-        for erg in self.ergs.ergs:
-            d.text(POSITIONS[0][erg_num], "{:.0f}m".format(erg.finish_distance), font=self.smallfnt, fill=(255,255,255,255))
-            d.text(POSITIONS[1][erg_num], "{:.0f}m".format(erg.distance), font=self.bigfnt, fill=(255,255,255,255))
+        for erg_idx,erg in enumerate(self.ergs.ergs):
+            d.text(POSITIONS[0][erg_idx], "{:.0f}m".format(erg.finish_distance), font=self.smallfnt, fill=(255,255,255,255))
+            d.text(POSITIONS[1][erg_idx], "{:.0f}m".format(erg.distance), font=self.bigfnt, fill=(255,255,255,255))
             if False:
-                min_val = int(status[erg_num]['pace']//60)
-                sec_val = int(status[erg_num]['pace'] - min_val*60)
-                d.text(POSITIONS[2][erg_num], f"{min_val}:{sec_val:02d}", font=self.smallfnt, fill=(255,255,255,255))
+                min_val = int(status[erg_idx]['pace']//60)
+                sec_val = int(status[erg_idx]['pace'] - min_val*60)
+                d.text(POSITIONS[2][erg_idx], f"{min_val}:{sec_val:02d}", font=self.smallfnt, fill=(255,255,255,255))
         # out = Image.alpha_composite(self.base, txt)
         # out.save('overlay.png')
         txt.save('overlay.png')
         time.sleep(2)
-
-
-# def stream_overlay(ergs, total_distance):
-#     base = Image.open("v2.png").convert('RGBA')
-#     vbigfnt = ImageFont.truetype('Pillow/Tests/fonts/arial.ttf', 32)
-#     bigfnt = ImageFont.truetype('Pillow/Tests/fonts/arial.ttf', 20)
-#     smallfnt = ImageFont.truetype('Pillow/Tests/fonts/arial.ttf', 16)
-#     while not exit_requested:
-#
-#         total_distance = 0
-#         for erg_num in range(NUM_ERGS):
-#             with open(f'erg{erg_num}.csv', 'r') as csvfile:
-#                 reader = csv.DictReader(csvfile)
-#                 for row in reader:
-#                     total_distance += int(row['Distance'])
-#
-#         txt = Image.new('RGBA', base.size, (255,255,255,0))
-#         d = ImageDraw.Draw(txt)
-#         d.text((600,10), f"{total_distance:.0f}", font=vbigfnt, fill=(255,255,255,255))
-#         for erg_num in range(NUM_ERGS):
-#             d.text(POSITIONS[0][erg_num], f"{status[erg_num]['remain']:.0f}m", font=smallfnt, fill=(255,255,255,255))
-#             d.text(POSITIONS[1][erg_num], f"{status[erg_num]['target']:.0f}m", font=bigfnt, fill=(255,255,255,255))
-#             if 'pace' in status[erg_num]:
-#                 min_val = int(status[erg_num]['pace']//60)
-#                 sec_val = int(status[erg_num]['pace'] - min_val*60)
-#                 d.text(POSITIONS[2][erg_num], f"{min_val}:{sec_val:02d}", font=smallfnt, fill=(255,255,255,255))
-#         # out = Image.alpha_composite(base, txt)
-#         # out.save('overlay.png')
-#         txt.save('overlay.png')
-#         time.sleep(2)
 
 class Erg(object):
     """docstring for Boat."""
@@ -322,8 +285,6 @@ def main():
                 #Releases lock, waits until notified or 1s elapsed, then reacquires lock
                 if not console_condition.wait(timeout=1):
                     pass
-                    # print(f"BUMPS: {bumps}")
-                    # boats_main_view(bumps=bumps)
             except KeyboardInterrupt:
                 #Acquires lock if wait is broken, waiting on async
                 # console_condition.acquire()

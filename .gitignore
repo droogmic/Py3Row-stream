@@ -1,4 +1,5 @@
 Py3Row/
+.venv/
 venv/
 Ergs/
 *.txt
