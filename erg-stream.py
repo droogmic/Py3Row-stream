@@ -214,7 +214,7 @@ def main():
             writer.writeheader()
 
     for i in range(NUM_ERGS):
-        fname = f'erg{i}.csv'
+        fname = "erg{}.csv".format(i+1)
         if not os.path.isfile(fname):
             print("Generating CSV Files")
             with open(fname, 'w') as csvfile:
